@@ -1,18 +1,16 @@
 let page;
 
-let getBeforeFunction = (link) => {
-  return async () => {
-    page = await browser.newPage();
-    await page.goto(link);
-  }
-}
-
+beforeEach(async () => {
+  page = await browser.newPage();
+});
 afterEach(() => {
   page.close();
 });
 
 describe("Github page tests", () => {
-beforeEach(getBeforeFunction('https://github.com/team'));
+  beforeEach(async () => {
+    await page.goto('https://github.com/team');
+  });
   test("The h1 header content'", async () => {
     const firstLink = await page.$("header div div a");
     await firstLink.click();
@@ -36,23 +34,19 @@ beforeEach(getBeforeFunction('https://github.com/team'));
 });
 
 describe("Github another page tests", () => {
-  beforeEach(getBeforeFunction('https://github.com/marketplace'));
   test("page of pull requests", async () => {
-    const pageTitle = await page.$eval("h1", h1 => h1.textContent);
-    expect(pageTitle).toEqual('Extend GitHub');
-  }, 60000);
+    await page.goto('https://github.com/marketplace');
+    const title4 = await page.title();
+    expect(title4).toEqual('GitHub Marketplace · to improve your workflow · GitHub');
+}, 60000);
   test("The h1 header content'", async () => {
-    const secondLink = await page.$("main div div div a");
-    await secondLink.click();
-    await page.waitForSelector('h1');
-    const title3 = await page.$eval("h1", h1 => h1.textContent);
-    expect(title3).toEqual('Free');
+    await page.goto('https://github.com/topics');
+    const title5 = await page.title();
+    expect(title5).toEqual('Topics on GitHub · GitHub');
   }, 60000);
   test("The link correct", async () => {
-    const thirdLink = await page.$("footer div ul li a");
-    await thirdLink.click();
-    await page.waitForSelector('head');
-    const title4 = await page.title();
-    expect(title4).toEqual('Features | GitHub · GitHub');
+    await page.goto('https://docs.github.com/en/site-policy/github-terms/github-terms-of-service');
+    const title6 = await page.title();
+    expect(title6).toEqual('GitHub Terms of Service - GitHub Docs');
   }, 60000);
 });
